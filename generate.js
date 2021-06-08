@@ -1,18 +1,32 @@
 const fs = require('fs');
 const { argv } = require('process');
 
-function createDirectory(type, pathName, content) {
-	const viewsPath = `./src/${type}/${pathName}`;
+function createDirectory(type, moduleName, content) {
+	const viewsPath = `./src/${type}/${moduleName}`;
+
+	// create directory
 	fs.mkdir(viewsPath, { recursive: true }, (dirErr) => {
 		if (dirErr) {
 			throw Error(dirErr);
 		}
 
+		// create file
 		fs.writeFile(`${viewsPath}/index.js`, content, (fileErr) => {
 			if (fileErr) {
 				throw Error(fileErr);
 			}
 		});
+
+		// append view or component
+		fs.appendFile(
+			`./src/${type}/index.js`,
+			`export { ${moduleName} } from './${moduleName}';\n`,
+			(appendErr) => {
+				if (appendErr) {
+					throw Error(appendErr);
+				}
+			},
+		);
 	});
 }
 

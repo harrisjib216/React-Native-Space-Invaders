@@ -1,12 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
 
-import { SafeView } from '../../components';
+import { SafeView, SpaceShip } from '../../components';
 
 const Game = ({ navigation, ...props }) => {
 	return (
-		<SafeView>
-			<Text>Hello</Text>
+		<SafeView style={styles.container}>
+			{/* spaceship */}
+			<SpaceShip />
 		</SafeView>
 	);
 };
@@ -14,6 +15,8 @@ const Game = ({ navigation, ...props }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		position: 'relative',
+		backgroundColor: 'black',
 	},
 });
 
