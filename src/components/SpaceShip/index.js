@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-	StyleSheet,
-	View,
-	Text,
-	Animated,
-	PanResponder,
-	Responder,
-} from 'react-native';
+import { StyleSheet, View, Animated } from 'react-native';
 import { screenWidth } from '../../modules/helpers';
 
 const SpaceShip = ({ ...props }) => {
@@ -14,27 +7,18 @@ const SpaceShip = ({ ...props }) => {
 		new Animated.ValueXY({ x: screenWidth / 2 - 25, y: 10 }),
 	);
 
-	const panResponder = React.useRef(
-		PanResponder.create({
-			onStartShouldSetPanResponder: (evt, gestureState) => true,
-			onMoveShouldSetPanResponder: (evt, gestureState) => true,
-			onPanResponderGrant: (env, gestureState) => {
-				position.x.setValue(gestureState.x0 - 25);
-			},
-			onPanResponderMove: (evt, gestureState) => {
-				if (gestureState.moveX <= 30) {
-				} else if (gestureState.moveX >= screenWidth - 30) {
-				} else {
-					position.x.setValue(gestureState.moveX - 25);
-				}
-			},
-		}),
-	).current;
-
 	return (
-		<View style={styles.container}>
+		<View
+			style={styles.container}
+			onMoveShouldSetResponder={() => true}
+			onResponderMove={(gestureState) => {
+				if (gestureState.nativeEvent.pageX <= 30) {
+				} else if (gestureState.nativeEvent.pageX >= screenWidth - 30) {
+				} else {
+					position.x.setValue(gestureState.nativeEvent.pageX - 25);
+				}
+			}}>
 			<Animated.Image
-				{...panResponder.panHandlers}
 				source={{
 					uri: 'https://cdn0.iconfinder.com/data/icons/video-games-outline/60/050_-_Space_Invaders-512.png',
 				}}
