@@ -11,11 +11,9 @@ const SpaceShip = ({ ...props }) => {
 		<View
 			style={styles.container}
 			onMoveShouldSetResponder={() => true}
-			onResponderMove={(gestureState) => {
-				if (gestureState.nativeEvent.pageX <= 30) {
-				} else if (gestureState.nativeEvent.pageX >= screenWidth - 30) {
-				} else {
-					position.x.setValue(gestureState.nativeEvent.pageX - 25);
+			onResponderMove={({ nativeEvent: { pageX } }) => {
+				if (pageX >= 30 && pageX <= screenWidth - 30) {
+					position.x.setValue(pageX - 25);
 				}
 			}}>
 			<Animated.Image
