@@ -2,26 +2,67 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Animated } from 'react-native';
 import { screenWidth } from '../../modules/helpers';
 
+const SHIP_SIZE = 64;
+const SHIP_MID = SHIP_SIZE / 2;
+
 const SpaceShip = ({ ...props }) => {
 	const [position, setPosition] = useState(
-		new Animated.ValueXY({ x: screenWidth / 2 - 25, y: 10 }),
+		new Animated.ValueXY({ x: screenWidth / 2 - SHIP_MID, y: 0 }),
 	);
+
+	const [cannonGlow, setCannonGlow] = useState(new Animated.Value(0.0));
+
+	const animateCannonGlow = (reset = false) => {
+		if (reset) {
+			return cannonGlow.setValue(0.0);
+		}
+
+		Animated.timing(cannonGlow, {
+			toValue: 1,
+			duration: 10,
+			useNativeDriver: true,
+		}).start();
+	};
 
 	return (
 		<View
 			style={styles.container}
-			onMoveShouldSetResponder={() => true}
+			onStartShouldSetResponder={() => true}
+			onResponderGrant={() => animateCannonGlow()}
+			onResponderEnd={() => animateCannonGlow(true)}
 			onResponderMove={({ nativeEvent: { pageX } }) => {
 				if (pageX >= 30 && pageX <= screenWidth - 30) {
-					position.x.setValue(pageX - 25);
+					position.x.setValue(pageX - SHIP_MID);
 				}
 			}}>
-			<Animated.Image
-				source={{
-					uri: 'https://cdn0.iconfinder.com/data/icons/video-games-outline/60/050_-_Space_Invaders-512.png',
-				}}
-				style={[styles.image, position.getLayout()]}
-			/>
+			<Animated.View
+				style={[styles.spaceshipWrapper, position.getLayout()]}>
+				{/* ship image */}
+				<Animated.Image
+					source={{
+						uri: 'https://cdn2.iconfinder.com/data/icons/crystalproject/crystal_project_256x256/apps/kspaceduel.png',
+					}}
+					style={[styles.image]}
+				/>
+
+				{/* left cannon glow */}
+				<Animated.View
+					style={[
+						styles.cannonGlow,
+						styles.cannonGlowLeft,
+						{ opacity: cannonGlow },
+					]}
+				/>
+
+				{/* right cannon glow */}
+				<Animated.View
+					style={[
+						styles.cannonGlow,
+						styles.cannonGlowRight,
+						{ opacity: cannonGlow },
+					]}
+				/>
+			</Animated.View>
 		</View>
 	);
 };
@@ -35,13 +76,30 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: 'white',
+	},
+	spaceshipWrapper: {
+		width: 64,
+		height: 68,
+		position: 'absolute',
+		alignItems: 'center',
+	},
+	cannonGlow: {
+		width: 3,
+		height: 3,
+		borderRadius: 1.5,
+		position: 'absolute',
+		backgroundColor: 'lightgreen',
+	},
+	cannonGlowLeft: {
+		left: SHIP_SIZE / 2 - 6.5,
+	},
+	cannonGlowRight: {
+		right: SHIP_SIZE / 2 - 5,
 	},
 	image: {
-		top: 15,
-		width: 50,
-		height: 50,
-		position: 'absolute',
+		width: 64,
+		height: 64,
+		transform: [{ scaleY: -1 }],
 	},
 });
 
